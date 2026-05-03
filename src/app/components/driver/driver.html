@@ -1,0 +1,122 @@
+<div class="driver-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="icon-badge">🚗</div>
+    <h1>Painel do Motorista</h1>
+    <p>Compartilhe sua localização em tempo real</p>
+  </div>
+
+  <!-- Card do ID -->
+  <div class="card id-card">
+    <div class="card-title">
+      <span class="title-icon">🔑</span>
+      <span>Seu ID de Compartilhamento</span>
+    </div>
+    <div class="id-wrapper" (click)="copyToClipboard()">
+      <code class="id-code">{{ driverId }}</code>
+      <button class="copy-icon-btn" (click)="copyToClipboard(); $event.stopPropagation()">
+        📋
+      </button>
+    </div>
+    <div class="card-hint" *ngIf="!showCopiedFeedback">
+      💡 Clique no ID para copiar
+    </div>
+    <div class="card-hint success" *ngIf="showCopiedFeedback">
+      ✅ ID copiado com sucesso!
+    </div>
+  </div>
+
+  <!-- Status do Rastreamento -->
+  <div class="status-card" *ngIf="isTracking">
+    <div class="status-header">
+      <div class="live-indicator">
+        <span class="pulse-dot"></span>
+        <span>RASTREAMENTO ATIVO</span>
+      </div>
+      <div class="location-count" *ngIf="locationCount > 0">
+        📡 {{ locationCount }} atualizações
+      </div>
+    </div>
+    
+    <div class="status-message-large">
+      {{ statusMessage }}
+    </div>
+    
+    <!-- Exibir localização atual -->
+    <div class="location-preview">
+      <div class="coord-box" [class.active]="lastLocation">
+        <div class="coord-label">Latitude</div>
+        <div class="coord-value" *ngIf="lastLocation; else noLat">
+          {{ formatCoordinate(lastLocation.lat) }}
+        </div>
+        <ng-template #noLat>
+          <div class="coord-value empty">Aguardando...</div>
+        </ng-template>
+      </div>
+      <div class="coord-box" [class.active]="lastLocation">
+        <div class="coord-label">Longitude</div>
+        <div class="coord-value" *ngIf="lastLocation; else noLng">
+          {{ formatCoordinate(lastLocation.lng) }}
+        </div>
+        <ng-template #noLng>
+          <div class="coord-value empty">Aguardando...</div>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="update-badge" *ngIf="lastLocation">
+      <span>🔄</span>
+      <span>Última atualização: agora</span>
+    </div>
+    
+    <div class="waiting-message" *ngIf="!lastLocation && statusMessage === '🟡 Solicitando permissão...'">
+      <span>⏳</span>
+      <span>Aguardando localização...</span>
+    </div>
+  </div>
+
+  <!-- Botões de Ação -->
+  <div class="action-buttons">
+    <button 
+      *ngIf="!isTracking" 
+      (click)="startTracking()" 
+      class="btn-start">
+      <span class="btn-icon">📍</span>
+      Iniciar Rastreamento
+    </button>
+    <button 
+      *ngIf="isTracking" 
+      (click)="stopTracking()" 
+      class="btn-stop">
+      <span class="btn-icon">⏹️</span>
+      Parar Rastreamento
+    </button>
+  </div>
+
+  <!-- Debug info (opcional, remove em produção) -->
+  <div class="debug-info" *ngIf="isTracking && lastLocation" style="font-size: 11px; color: #888; text-align: center; margin-top: 10px;">
+    Debug: Lat: {{ lastLocation.lat }}, Lng: {{ lastLocation.lng }}
+  </div>
+
+  <!-- Mensagens de Erro -->
+  <div class="error-message-box" *ngIf="errorMessage">
+    <span class="error-icon">⚠️</span>
+    <span>{{ errorMessage }}</span>
+    <button class="error-close" (click)="errorMessage = ''">✕</button>
+  </div>
+
+  <!-- Dicas de Uso -->
+  <div class="tips-card" *ngIf="!isTracking && !errorMessage">
+    <div class="tips-title">
+      <span class="tips-icon">💡</span>
+      <span>Como funciona?</span>
+    </div>
+    <ul class="tips-list">
+      <li>🔐 Seu ID é gerado automaticamente</li>
+      <li>📱 Compartilhe o ID com o passageiro</li>
+      <li>📍 Ative o rastreamento para começar</li>
+      <li>🔄 A localização é enviada em tempo real</li>
+      <li>📋 Clique no ID para copiar e compartilhar</li>
+    </ul>
+  </div>
+</div>

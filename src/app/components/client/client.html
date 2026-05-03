@@ -1,0 +1,118 @@
+<div class="client-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar-modern">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">📍</span>
+        <span class="logo-text">TrackView</span>
+      </div>
+      <p class="logo-subtitle">Monitoramento em tempo real</p>
+    </div>
+
+    <div class="connection-section">
+      <div class="input-group">
+        <label class="input-label">
+          <span class="label-icon">🔑</span>
+          ID do Motorista
+        </label>
+        <input
+          type="text"
+          class="input-field"
+          [(ngModel)]="driverId"
+          placeholder="Cole o ID aqui..."
+          [disabled]="isConnected"
+        />
+      </div>
+
+      <button 
+        *ngIf="!isConnected" 
+        (click)="connect()" 
+        class="btn-connect"
+        [disabled]="isLoading">
+        <span class="btn-icon" *ngIf="!isLoading">🔌</span>
+        <span class="btn-icon" *ngIf="isLoading">⏳</span>
+        {{ isLoading ? 'Conectando...' : 'Conectar' }}
+      </button>
+      
+      <button 
+        *ngIf="isConnected" 
+        (click)="disconnect()" 
+        class="btn-disconnect">
+        <span class="btn-icon">🔌</span>
+        Desconectar
+      </button>
+    </div>
+
+    <div class="status-section">
+      <div class="status-card-mini" [class.active]="isConnected">
+        <div class="status-dot"></div>
+        <div class="status-details">
+          <span class="status-label">Status</span>
+          <span class="status-value">{{ connectionStatus }}</span>
+        </div>
+      </div>
+
+      <div class="info-card" *ngIf="isConnected">
+        <div class="info-row">
+          <span>📡 Atualizações:</span>
+          <strong>{{ locationCount }}</strong>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-alert">
+        <span>⚠️</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <div *ngIf="isConnected && currentLocation" class="location-card">
+        <h4 class="location-title">
+          <span>📍</span>
+          Localização Atual
+        </h4>
+        <div class="location-coords">
+          <div class="coord-item">
+            <span class="coord-label">Latitude</span>
+            <span class="coord-value">{{ formatCoordinate(currentLocation.lat) }}</span>
+          </div>
+          <div class="coord-item">
+            <span class="coord-label">Longitude</span>
+            <span class="coord-value">{{ formatCoordinate(currentLocation.lng) }}</span>
+          </div>
+        </div>
+        <div class="timestamp">
+          <span>🕐</span>
+          <span>Atualizado: {{ currentLocation.timestamp | date:'HH:mm:ss' }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isConnected && !currentLocation" class="waiting-card">
+        <div class="waiting-spinner"></div>
+        <p>Aguardando localização do motorista...</p>
+        <small>O motorista precisa ativar o rastreamento</small>
+      </div>
+    </div>
+
+    <div class="action-buttons" *ngIf="isConnected && !isFirstLocation">
+      <button class="btn-recenter" (click)="enableAutoCenter()" title="Centralizar no motorista">
+        <span class="btn-icon">🎯</span>
+        Centralizar
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="info-note">
+        <span class="info-icon">💡</span>
+        <span>Compartilhe o ID com o motorista para começar</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mapa -->
+  <main class="map-modern">
+    <div id="map"></div>
+    <div class="map-overlay" *ngIf="!mapInitialized">
+      <div class="loading-spinner"></div>
+      <p>Carregando mapa...</p>
+    </div>
+  </main>
+</div>

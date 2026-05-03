@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/realtime-tracking-frontend",
+  "devCommand": "ng serve",
+  "installCommand": "npm install",
+  "framework": "angular",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "API_URL": "https://realtime-tracking-api.onrender.com",
+    "WS_URL": "wss://realtime-tracking-api.onrender.com"
+  }
+}
